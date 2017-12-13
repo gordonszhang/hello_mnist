@@ -6,20 +6,22 @@
 
 HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), layerData(layer_array) {
     //instantiate weight tables
-    for (int layer = 1; layer < num_layers; ++layer) {
-        weights[layer] = new float*[layer_array[layer]]; //input layer doesn't need weights so skip layer 0
-        for (int destination =0; destination < layer_array[layer]; ++destination){
-            weights[layer][destination] = new float[layer_array[layer-1]];
-            for (int source = 0; source < layer_array[layer-1]; ++source){
-                //every individual weight starts at a random value
-                weights[layer][destination][source] = float(float(random() % 200 - 100) / 100.0);
+    weights = new float**[num_layers];
+    for (int layer = 0; layer < num_layers-1; ++layer) {  //a table for every layer
+        weights[layer] = new float*[layer_array[layer+1]]; //input layer doesn't need weights so skip layer 0
+        for (int destination =0; destination < layer_array[layer]; ++destination){  //a row for every neuron in that row
+            //ternary operator is to handle input layer
+            weights[layer][destination] = new float[layer_array[(layer != 0 ? layer - 1 : 1)]];
+            for (int source = 0; source < layer_array[layer]; ++source){ //each entry is the weight of the incoming signal
+                weights[layer][destination][source] = layer != 0 ? float(float(random() % 200 - 100) / 100.0) : 1.0F;
             }
         }
     }
 
     //instantiate bias vectors for each layer
-    for (int layer = 0; layer < num_layers; ++layer) {
-        biases[layer] = new float[layer_array[layer]];
+    biases = new float*[num_layers-1];
+    for (int layer = 0; layer < num_layers-1; ++layer) {
+        biases[layer] = new float[layer_array[layer+1]];  //input layer doesn't have any biases
         for(int i =0; i < layer_array[layer]; ++i){
             biases[layer][i] = float(float(random()%200-100)/100.0);
         }
@@ -28,15 +30,10 @@ HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), 
 }
 
 HelloNet::~HelloNet() {
-    //clean up everything in one giant wonderful pass
-    for (int i = 0; i < num_layers; ++i) {
-
-    }
-
 }
 
 float HelloNet::forwardProp(float *input_vector, int size) {
-
+    return 0;
 }
 
 float HelloNet::verboseFProp(float *input_vector, int size) {
@@ -52,11 +49,11 @@ int HelloNet::verboseBProp(float *training_input) {
 }
 
 float HelloNet::activate(float h) {
-    return 0;
+    return 1/(1+exp(-h));
 }
 
 float HelloNet::actPrime(float h) {
-    return 0;
+    return activate(h)*(1-activate(h));
 }
 
 void HelloNet::gradientDescent(int epochs, float learn_rate, float **training_data) {

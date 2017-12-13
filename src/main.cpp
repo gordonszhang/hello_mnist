@@ -1,13 +1,14 @@
 #include <iostream>
+#include <cmath>
 
 /*
  * At this point in time, this is just a playground file where I goof around and see what works
  */
 int main() {
-    float *list;
-    list = new float[10];
+    double *list;
+    list = new double[10];
     for (int i = 0; i < 10; ++i) {
-        list[i] = float(rand()%200-100)/100.0;
+        list[i] = exp(1);
     }
     for (int j = 0; j < 10; ++j) {
         std::cout << list[j] << std::endl;
