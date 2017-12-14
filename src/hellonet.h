@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <random>
 #include <vector>
+#include <iostream>
 
 class HelloNet{
 private:
@@ -31,8 +32,11 @@ public:
      */
     HelloNet(int layer_count, int *layer_array);
 
-    //recursively compute output of neural network
-    std::vector<float> forwardProp(std::vector<float> &inputs);
+    //print the weight tables to stdout
+    void dumpWeightTables();
+
+    //recursively compute output of neural network and write output back to data vector
+    void forwardProp(std::vector<float> &data);
 
     //perform back propagation algorithm on a single training sample
     float backProp(float *training_input);

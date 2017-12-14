@@ -5,6 +5,7 @@
 #include "hellonet.h"
 
 HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), layerData(layer_array) {
+    srand((unsigned)time(NULL));
     //instantiate weight tables
     weights.resize(num_layers-1); // one table per layer
     for (int i = 1; i < num_layers; ++i) {
@@ -18,7 +19,7 @@ HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), 
     for (auto &&layer : weights) {
         for (auto &&destination : layer) {
             for (auto &&sourceWeight : destination) {
-                sourceWeight = float(arc4random()%100-200)/100.0f;
+                sourceWeight = float((rand()%2000)-1000)/1000.0f;
             }
         }
     }
@@ -32,26 +33,24 @@ HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), 
     //fill bias vectors with randomness
     for (auto &&layer : biases) {
         for (auto &&neuron_bias : layer) {
-            neuron_bias = float(arc4random()%100-200)/100.0f;
+            neuron_bias = float((rand()%2000)-1000)/1000.0f;
         }
     }
 }
 
-std::vector<float> HelloNet::forwardProp(std::vector<float> &inputs) {
+void HelloNet::forwardProp(std::vector<float> &data) {
     std::vector<float> activations; //activation
     for (int layer = 0; layer < weights.size(); ++layer) {  //for each layer, get table
         for (int neuron = 0; neuron < weights[layer].size(); ++neuron) { //for each table, get row of weights
             float h = biases[layer][neuron];  //hypothesis h = b + ∑wa
             for (int i = 0; i < weights[layer][neuron].size(); ++i) { //compute ∑wa and add to b
-                h += weights[layer][neuron][i]*inputs[i];
+                h += weights[layer][neuron][i]*data[i];
             }
             activations.push_back(activate(h));
         }
-        inputs = activations; //activations from current layer become inputs to next layer
+        data = activations; //activations from current layer become inputs in next layer
         activations.clear(); //clean out activations
     }
-
-    return inputs;
 }
 
 
@@ -69,5 +68,23 @@ float HelloNet::actPrime(float h) {
 }
 
 void HelloNet::gradientDescent(int epochs, float learn_rate, float **training_data) {
+
+}
+
+void HelloNet::dumpWeightTables() {
+
+    std::string test = "";
+    for (auto &&layer : weights) {
+        test += "NEW TABLE\n";
+        for (auto &&destination : layer) {
+            for (auto &&source : destination) {
+                test += std::to_string(source) + "\t";
+            }
+            test += "\n";
+        }
+        test += "\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n";
+    }
+
+    std::cout<<test<<std::endl;
 
 }

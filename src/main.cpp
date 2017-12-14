@@ -1,43 +1,30 @@
-#include <iostream>
-#include <vector>
+#include "hellonet.h"
 /*
  * At this point in time, this is just a playground file where I goof around and see what works
  */
+
+int run_tests(){
+    //constructor test
+    std::cout << "Creating NN with spec: [4,3,2]" << std::endl;
+    int config[3]= {4, 3, 2};
+    HelloNet *test = new HelloNet(3, config);
+    std::cout << "Here are weight tables:" << std::endl;
+    test->dumpWeightTables();
+
+
+    //forward propagation test
+    std::cout << "testing network with data = [1.0f,1.0f,1.0f,1.0f]" << std::endl;
+    std::vector<float> testData = {1.0f, 1.0f, 1.0f, 1.0f};
+    test->forwardProp(testData);
+    std::string fPropOutput = "<";
+    for (auto &&result : testData) fPropOutput += std::to_string(result) + ", ";
+    fPropOutput += ">";
+    std::cout << "RESULT:\t" + fPropOutput << std::endl;
+
+
+
+
+}
 int main() {
-    std::vector<std::vector<std::vector<int>>> weights;
-    int layer_array[3] = {4,3,2};
-    int num_layers = 3;
-    weights.resize(num_layers-1); // one table per layer
-    for (int i = 1; i < num_layers; ++i) {
-        weights[i-1].resize(layer_array[i]); // one row per neuron in current row
-        for (int j = 0; j < layer_array[i]; ++j) {
-            weights[i-1][j].resize(layer_array[i-1]); // one entry in the row per input connection
-        }
-    }
-
-    for (auto &&layer : weights) {
-        for (auto &&destination : layer) {
-            for (auto &&source : destination) {
-                source = random() % 100;
-            }
-        }
-    }
-
-    std::string test = "";
-    for (auto &&layer : weights) {
-        test += "NEW TABLE\n";
-        for (auto &&destination : layer) {
-            for (auto &&source : destination) {
-                test += std::to_string(source) + "\t";
-            }
-            test += "\n";
-        }
-        test += "\nXXXXX\n";
-    }
-
-    std::cout<<test<<std::endl;
-
-
-
-
+    run_tests();
 }
