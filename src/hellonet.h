@@ -20,26 +20,20 @@ private:
     std::vector<std::vector<float>> biases;
 
     //the number of layers in the neural net
-    int num_layers;
+    unsigned long num_layers;
 
     //the amount of neurons in each layer in array form
-    int  *layerData;
+    unsigned long  *layerData;
 public:
     /*
      * HelloNet takes a list of ints, each int being the count of neurons in each layer
      * arg_count: amount of layers i.e. amount of ints in array
      * arg_list: array of ints
      */
-    HelloNet(int layer_count, int *layer_array);
+    HelloNet(unsigned long layer_count, unsigned long *layer_array);
 
     //print the weight tables to stdout
     void dumpWeightTables();
-
-    //recursively compute output of neural network and write output back to data vector
-    void forwardProp(std::vector<float> &data);
-
-    //perform back propagation algorithm on a single training sample
-    float backProp(float *training_input);
 
     //activation function applied to hypothesis h
     float activate(float h);
@@ -47,8 +41,20 @@ public:
     //derivative of activation function
     float actPrime(float h);
 
-    //train the NN using gradient descent
-    void gradientDescent(int epochs, float learn_rate, float **training_data);
+    //classify input data and return result into the same variable passed in
+    void parse(std::vector<float> &data);
+
+    //perform back propagation algorithm on a single training sample
+    void HelloNet::backProp(std::vector<float> &trainingLabel,
+                            std::vector<float> &trainingData,
+                            std::vector<std::vector<float>> &nabla_b,
+                            std::vector<std::vector<float>> &nabla_w);
+
+    //get the "change factor", by performing a piecewise subtraction between two vectors and gets loaded into output á la C-style
+    void costDerivative(std::vector<float> &expectedValues, std::vector<float> &currentValues, std::vector<float> &output);
+
+    //train the NN using stochastic gradient descent
+    void sgd(int epochs, float learn_rate, float **training_data);
 
 
 };

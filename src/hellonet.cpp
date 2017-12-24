@@ -3,9 +3,10 @@
 //
 
 #include "hellonet.h"
-
-HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), layerData(layer_array) {
-    srand((unsigned)time(NULL));
+HelloNet::HelloNet(unsigned long layer_count, unsigned long *layer_array): num_layers(layer_count), layerData(layer_array) {
+    std::random_device rd; //apparently rand() sucks balls
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
     //instantiate weight tables
     weights.resize(num_layers-1); // one table per layer
     for (int i = 1; i < num_layers; ++i) {
@@ -19,7 +20,7 @@ HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), 
     for (auto &&layer : weights) {
         for (auto &&destination : layer) {
             for (auto &&sourceWeight : destination) {
-                sourceWeight = float((rand()%2000)-1000)/1000.0f;
+                sourceWeight = dist(mt);
             }
         }
     }
@@ -33,12 +34,38 @@ HelloNet::HelloNet(int layer_count, int *layer_array): num_layers(layer_count), 
     //fill bias vectors with randomness
     for (auto &&layer : biases) {
         for (auto &&neuron_bias : layer) {
-            neuron_bias = float((rand()%2000)-1000)/1000.0f;
+            neuron_bias = dist(mt);
         }
     }
 }
 
-void HelloNet::forwardProp(std::vector<float> &data) {
+void HelloNet::dumpWeightTables() {
+
+    std::string test;
+    for (auto &&layer : weights) {
+        test += "NEW TABLE\n";
+        for (auto &&destination : layer) {
+            for (auto &&source : destination) {
+                test += std::to_string(source) + "\t";
+            }
+            test += "\n";
+        }
+        test += "\nXXXXXXXXXXXXXXXXX\n";
+    }
+
+    std::cout<<test<<std::endl;
+
+}
+
+float HelloNet::activate(float h) { //this could be replaced with a ReLU or sigmoid function
+    return tanhf(h);
+}
+
+float HelloNet::actPrime(float h) { //this is just the derivative of activate(h)
+    return 1 / powf(coshf(h), 2);
+}
+
+void HelloNet::parse(std::vector<float> &data) {
     std::vector<float> activations; //activation
     for (int layer = 0; layer < weights.size(); ++layer) {  //for each layer, get table
         for (int neuron = 0; neuron < weights[layer].size(); ++neuron) { //for each table, get row of weights
@@ -53,38 +80,53 @@ void HelloNet::forwardProp(std::vector<float> &data) {
     }
 }
 
-
-
-float HelloNet::backProp(float *training_input) {
-    return 0;
+void HelloNet::costDerivative(std::vector<float> &expectedValues, std::vector<float> &currentValues, std::vector<float> &output) {
+    std::transform(currentValues.begin(), currentValues.end(),
+                   expectedValues.begin(),
+                   std::back_inserter(output), std::minus());
 }
 
-float HelloNet::activate(float h) {
-    return tanhf(h);
-}
+void HelloNet::backProp(std::vector<float> &trainingLabel,
+                        std::vector<float> &trainingData,
+                        std::vector<std::vector<float>> &nabla_b,
+                        std::vector<std::vector<float>> &nabla_w) {
+    std::vector<std::vector<float>> hypotheses; //this is the "zs" from Neilsen's code
+    std::vector<std::vector<float>> activations;
+    activations.reserve(num_layers); //pre-allocate memory for layers
+    hypotheses.reserve(num_layers - 1); //no hypothesis for input layer
+    activations[0] = trainingData; //the input layer just forwards the input data
 
-float HelloNet::actPrime(float h) {
-    return 1/(coshf(h)*coshf(h));
-}
-
-void HelloNet::gradientDescent(int epochs, float learn_rate, float **training_data) {
-
-}
-
-void HelloNet::dumpWeightTables() {
-
-    std::string test = "";
-    for (auto &&layer : weights) {
-        test += "NEW TABLE\n";
-        for (auto &&destination : layer) {
-            for (auto &&source : destination) {
-                test += std::to_string(source) + "\t";
+    //perform forward pass
+    for (int layer = 0; layer < weights.size(); ++layer) {  //for each non-input layer, get table
+        activations[layer+1].reserve(weights[layer].size()); //more pre-allocation for values within each layer
+        hypotheses[layer].reserve(weights[layer].size());
+        for (int neuron = 0; neuron < weights[layer].size(); ++neuron) { //for each table, get row of weights
+            float h = biases[layer][neuron];  //hypothesis h = b + ∑wa
+            for (int i = 0; i < weights[layer][neuron].size(); ++i) { //compute ∑wa and add to b
+                h += weights[layer][neuron][i]*activations[layer][i]; //activations[0] is just the input data
             }
-            test += "\n";
+            hypotheses[layer][neuron] = h;
+            activations[layer+1][neuron] = activate(h); //+1 here because weights don't have the input layer
         }
-        test += "\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n";
     }
 
-    std::cout<<test<<std::endl;
+    //time for the backward pass
+    std::vector<float> delta;
+    delta.reserve(layerData[num_layers-1]); //delta vector is going to be size of the output vector
+    costDerivative(trainingLabel, activations[activations.size()-1], delta);
+    for (int i  = 0; i < delta.size(); ++i){
+      delta[i] *= actPrime(hypotheses[hypotheses.size()-1][i]);
+    }
+    nabla_b[nabla_b.size()-1] = delta;
+
+
+
+
+
+}
+
+
+
+void HelloNet::sgd(int epochs, float learn_rate, float **training_data) {
 
 }
