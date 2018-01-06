@@ -83,13 +83,10 @@ void HelloNet::parse(std::vector<float> &data) {
 void HelloNet::costDerivative(std::vector<float> &expectedValues, std::vector<float> &currentValues, std::vector<float> &output) {
     std::transform(currentValues.begin(), currentValues.end(),
                    expectedValues.begin(),
-                   std::back_inserter(output), std::minus());
+                   std::back_inserter(output), std::minus<float>());
 }
 
-void HelloNet::backProp(std::vector<float> &trainingLabel,
-                        std::vector<float> &trainingData,
-                        std::vector<std::vector<float>> &nabla_b,
-                        std::vector<std::vector<float>> &nabla_w) {
+void HelloNet::backProp(std::vector<float> &trainingLabel, std::vector<float> &trainingData, std::vector<std::vector<float>> &nabla_b, std::vector<std::vector<float>> &nabla_w) {
     std::vector<std::vector<float>> hypotheses; //this is the "zs" from Neilsen's code
     std::vector<std::vector<float>> activations;
     activations.reserve(num_layers); //pre-allocate memory for layers
@@ -117,7 +114,7 @@ void HelloNet::backProp(std::vector<float> &trainingLabel,
     for (int i  = 0; i < delta.size(); ++i){
       delta[i] *= actPrime(hypotheses[hypotheses.size()-1][i]);
     }
-    nabla_b[nabla_b.size()-1] = delta;
+    nabla_b.push_back(delta);
 
 
 

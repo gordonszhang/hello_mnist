@@ -45,10 +45,7 @@ public:
     void parse(std::vector<float> &data);
 
     //perform back propagation algorithm on a single training sample
-    void HelloNet::backProp(std::vector<float> &trainingLabel,
-                            std::vector<float> &trainingData,
-                            std::vector<std::vector<float>> &nabla_b,
-                            std::vector<std::vector<float>> &nabla_w);
+    void backProp(std::vector<float> &trainingLabel, std::vector<float> &trainingData, std::vector<std::vector<float>> &nabla_b, std::vector<std::vector<float>> &nabla_w);
 
     //get the "change factor", by performing a piecewise subtraction between two vectors and gets loaded into output á la C-style
     void costDerivative(std::vector<float> &expectedValues, std::vector<float> &currentValues, std::vector<float> &output);
