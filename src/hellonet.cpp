@@ -4,7 +4,7 @@
 
 #include "hellonet.h"
 HelloNet::HelloNet(unsigned long layer_count, unsigned long *layer_array): num_layers(layer_count), layerData(layer_array) {
-    std::random_device rd; //apparently rand() sucks balls
+    std::random_device rd; //apparently rand() sucks balls, so here's a Mersenne twister
     std::mt19937 mt(rd());
     std::uniform_real_distribution<float> dist(0.0f, 1.0f);
     //instantiate weight tables

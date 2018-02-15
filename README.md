@@ -1,11 +1,19 @@
 # Hello MNIST
-A basic implementation of an artificial neural network in C++ that performs basic OCR, 
+A learning-oriented implementation of an artificial neural network in C++ that performs basic OCR, 
 inspired by this wonderful [YouTube series created by 3Blue1Brown](http://3b1b.co/neural-networks)
-and Michael Neilsen's _[Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/)_. 
-The code can be found [here](https://github.com/mnielsen/neural-networks-and-deep-learning).
+and Michael Neilsen's [Neural Networks and Deep Learning](http://neuralnetworksanddeeplearning.com/). 
+The code can be found [here](https://github.com/mnielsen/neural-networks-and-deep-learning). Very much like Nielsen's 
+code, this project chooses to forgo some optimizations for the sake of keeping the code readable for people getting 
+into ML. 
 
+## To-Do
+- [ ] Write back-propagation algorithm
+- [ ] Write parser for the data set to convert to arrays of floats (or steal one already written)
+- [ ] Write stochastic gradient descent code.
+- [ ] Write testing code. 
+ 
 ## So... What does the code do?
-The neural network trains on about 60,000 labelled hand-drawn characters from a NIST dataset (hence
+The neural network trains on the from a modified NIST dataset (hence
 the name). You can then feed it a new hand labelled character in hopefully it will properly identify it.
 
 ## Why would anyone care about _this_ repo? 

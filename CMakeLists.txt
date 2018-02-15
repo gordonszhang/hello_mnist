@@ -3,4 +3,4 @@ project(hello_mnist)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(hello_mnist src/hellonet.cpp src/main.cpp)
+add_executable(hello_mnist src/hellonet.cpp src/main.cpp src/mnist_parser.cpp src/mnist_parser.h)
