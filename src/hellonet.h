@@ -14,10 +14,10 @@
 class HelloNet{
 private:
     //array of weighs
-    std::vector<std::vector<std::vector<float>>>  weights;
+    std::vector<std::vector<std::vector<double>>>  weights;
 
     //array of bias vectors
-    std::vector<std::vector<float>> biases;
+    std::vector<std::vector<double>> biases;
 
     //the number of layers in the neural net
     unsigned long num_layers;
@@ -30,28 +30,30 @@ public:
      * arg_count: amount of layers i.e. amount of ints in array
      * arg_list: array of ints
      */
-    HelloNet(unsigned long layer_count, unsigned long *layer_array);
+    explicit HelloNet(std::vector<unsigned long> layer_config);
+
+    HelloNet(std::vector<unsigned long> layer_config, double fixed_weight, double fixed_bias);
 
     //print the weight tables to stdout
     void dumpWeightTables();
 
     //activation function applied to hypothesis h
-    float activate(float h);
+    double activate(double h);
 
     //derivative of activation function
-    float actPrime(float h);
+    double actPrime(double h);
 
     //classify input data and return result into the same variable passed in
-    void parse(std::vector<float> &data);
+    void parse(std::vector<double> &data);
 
     //perform back propagation algorithm on a single training sample
-    void backProp(std::vector<float> &trainingLabel, std::vector<float> &trainingData, std::vector<std::vector<float>> &nabla_b, std::vector<std::vector<float>> &nabla_w);
+    void backProp(std::vector<double> &trainingLabel, std::vector<double> &trainingData, std::vector<std::vector<double>> &nabla_b, std::vector<std::vector<double>> &nabla_w);
 
     //get the "change factor", by performing a piecewise subtraction between two vectors and gets loaded into output á la C-style
-    void costDerivative(std::vector<float> &expectedValues, std::vector<float> &currentValues, std::vector<float> &output);
+    void costDerivative(std::vector<double> &expectedValues, std::vector<double> &currentValues, std::vector<double> &output);
 
     //train the NN using stochastic gradient descent
-    void sgd(int epochs, float learn_rate, float **training_data);
+    void sgd(int epochs, double learn_rate, std::vector<std::vector<double>> training_data);
 
 
 };
