@@ -20,7 +20,7 @@ EXEC=\
 
 all: imgview
 
-compose: imgview.o image.o mnist_parser.o
+imgview: imgview.o image.o mnist_parser.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 clean:
