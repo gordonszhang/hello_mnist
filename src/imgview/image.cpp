@@ -29,11 +29,14 @@ Image::Image(int w, int h, int s_i, int channels, vector< vector<double> > image
         for(int i = 0; i < height; ++i) {
             for(int j = 0; j < width; ++j) {
                 int index = i * width + j;
-                rgba_pixmap[index].r = selected_image[index];
-                rgba_pixmap[index].g = selected_image[index];
-                rgba_pixmap[index].b = selected_image[index];
+                int flipped_index = (height - 1 - i) * width + j;
+                //cout << selected_image[index] << " ";
+                rgba_pixmap[index].r = selected_image[flipped_index];
+                rgba_pixmap[index].g = selected_image[flipped_index];
+                rgba_pixmap[index].b = selected_image[flipped_index];
                 rgba_pixmap[index].a = 255;
             }
+            //cout << endl;
         }
     }
 }

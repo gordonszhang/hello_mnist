@@ -28,6 +28,7 @@ void draw()
 {
     //glEnable(GL_BLEND);
     //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     // Get image paramters and pixmap from class object
@@ -50,14 +51,16 @@ void input(unsigned char key, int x, int y)
         if(index == 0) return;
         index--;
         image = new Image(data->cols, data->rows, index, 1, data->image_arr);
+        cout << "Digit label: " << data->label_arr[index] << endl;
         draw();
         return;
     case 'n':
     case 'N':
         if(index == data->num_images - 1) return;
         index++;
-        cout << index;
+
         image = new Image(data->cols, data->rows, index, 1, data->image_arr);
+        cout << "Digit label: " << data->label_arr[index] << endl;
         draw();
         return;
     default: // not a valid key -- just ignore it
@@ -111,6 +114,7 @@ void resize(int w, int h)
         x = 0;
     if (y < 0)
         y = 0;
+        
     glRasterPos2i(x, y); // Set raster render position, accounting for scale
 }
 
@@ -128,7 +132,7 @@ int main(int argc, char *argv[])
     glutKeyboardFunc(input);
     
     image = new Image(data->cols, data->rows, index, 1, data->image_arr);
-    
+    cout << "Digit label: " << data->label_arr[index] << endl;
     glutMainLoop();
 
     return 0;
